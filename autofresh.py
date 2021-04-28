@@ -72,4 +72,4 @@ def should_refresh():
 
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-threading.Thread(target=app.run).start()
+app.run()
