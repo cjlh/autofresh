@@ -38,7 +38,7 @@ def update_last_modified_times(root):
 
 
 def init(root):
-    t = threading.Thread(target=update_last_modified_times, args=(root,)).start()
+    threading.Thread(target=update_last_modified_times, args=(root,)).start()
     return Flask(__name__, template_folder=root)
 
 
