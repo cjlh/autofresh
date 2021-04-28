@@ -16,7 +16,7 @@ LAST_ACCESSED = dict()
 REFRESH_SCRIPT = f"""
 window.setInterval(function(){{
     fetch('/shouldRefresh?filename=' +
-          (window.location.pathname === '/' ? 'index.html' : window.location.pathname))
+          (window.location.pathname === '/' ? '/index.html' : window.location.pathname))
         .then(response => response.json())
         .then(json => refresh(json['result']));
 }}, {CLIENT_REFRESH_PERIOD_SECONDS * 1000});
@@ -29,17 +29,16 @@ function refresh(shouldRefresh) {{
 """
 
 
-def update_files_last_modified(root):
+def update_last_modified_times(root):
+    trim_length = len(root) - 1 if root[-1] == '/' else len(root)
     while True:
-        trim_length = len(root) if root[-1] == '/' else len(root) + 1
         for filename in glob.iglob(root + '**/**', recursive=True):
             LAST_MODIFIED[filename[trim_length:]] = os.path.getmtime(filename)
-        print(LAST_MODIFIED)
         time.sleep(SERVER_FILE_CHECK_PERIOD_SECONDS)
 
 
 def init(root):
-    t = threading.Thread(target=update_files_last_modified, args=(root,)).start()
+    t = threading.Thread(target=update_last_modified_times, args=(root,)).start()
     return Flask(__name__, template_folder=root)
 
 
@@ -54,8 +53,7 @@ else:
 
 @app.route('/<path:filename>')
 def serve_file(filename):
-    # LAST_ACCESSED[filename[1:]] = time.time()
-    LAST_ACCESSED[filename] = time.time()
+    LAST_ACCESSED[f'/{filename}'] = time.time()
     s = f"{{% include '{filename}' %}}" + f"\n<script>{REFRESH_SCRIPT}</script>"
     return render_template_string(s)
 
