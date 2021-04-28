@@ -1,6 +1,6 @@
 # autofresh
 
-Auto-refreshing web server for local static web development
+autofresh is a simple Flask app that serves your static HTML files with JavaScript injected to refresh the page when its file is changed locally.
 
 ## Requirements
 Python >=3.6 and Flask. Install with `pip install flask`.

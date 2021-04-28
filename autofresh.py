@@ -32,14 +32,16 @@ function refresh(shouldRefresh) {{
 def update_last_modified_times(root):
     trim_length = len(root) - 1 if root[-1] == '/' else len(root)
     while True:
-        for filename in glob.iglob(root + '**/**', recursive=True):
+        for filename in glob.iglob(root + '**/**/*.html', recursive=True):
             LAST_MODIFIED[filename[trim_length:]] = os.path.getmtime(filename)
         time.sleep(SERVER_FILE_CHECK_PERIOD_SECONDS)
 
 
 def init(root):
-    threading.Thread(target=update_last_modified_times, args=(root,)).start()
-    return Flask(__name__, template_folder=root)
+    t = threading.Thread(target=update_last_modified_times, args=(root,))
+    t.daemon = True
+    t.start()
+    return Flask(__name__, template_folder=root, static_folder=root)
 
 
 parser = ArgumentParser()
@@ -53,9 +55,12 @@ else:
 
 @app.route('/<path:filename>')
 def serve_file(filename):
-    LAST_ACCESSED[f'/{filename}'] = time.time()
-    s = f"{{% include '{filename}' %}}" + f"\n<script>{REFRESH_SCRIPT}</script>"
-    return render_template_string(s)
+    if filename.endswith('.html') or filename.endswith('.htm'):
+        LAST_ACCESSED[f'/{filename}'] = time.time()
+        s = f"{{% include '{filename}' %}}" + f"\n<script>{REFRESH_SCRIPT}</script>"
+        return render_template_string(s)
+    head, tail = os.path.split(filename)
+    return send_from_directory(os.path.join(app.static_folder, head), tail)
 
 
 @app.route('/')
