@@ -2,10 +2,10 @@
 
 Auto-refreshing web server for local static web development
 
-# Requirements
+## Requirements
 Just Flask. Install with `pip install flask`.
 
-# Use
+## Use
 Use the following command to launch autofresh and point to a directory of your choice. This will default to the `example_root` directory.
 
 ```
