@@ -1,4 +1,4 @@
-# autofresh
+# autofresh
 
 Auto-refreshing web server for local static web development
 
