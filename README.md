@@ -3,7 +3,7 @@
 Auto-refreshing web server for local static web development
 
 ## Requirements
-Python >=3.5 and Flask. Install with `pip install flask`.
+Python >=3.6 and Flask. Install with `pip install flask`.
 
 Or with a virtual environment: `python3 -m venv venv && source venv/bin/activate && pip install flask`
 
